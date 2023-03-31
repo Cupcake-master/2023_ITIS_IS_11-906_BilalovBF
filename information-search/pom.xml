@@ -28,19 +28,12 @@
 
   <repositories>
     <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
+      <id>snowball-repo</id>
+      <url>http://snowball.tartarus.org/repo</url>
     </repository>
   </repositories>
 
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
@@ -48,9 +41,39 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.shuyo</groupId>
-      <artifactId>language-detection</artifactId>
-      <version>1.8.14</version>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-snowball</artifactId>
+      <version>3.0.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
+      <version>8.11.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>2.9.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>4.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.opennlp</groupId>
+      <artifactId>opennlp-tools</artifactId>
+      <version>2.1.1</version>
     </dependency>
   </dependencies>
 </project>

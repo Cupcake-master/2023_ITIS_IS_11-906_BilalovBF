@@ -12,13 +12,15 @@ public class WebCrawler {
     private static final int MAX_PAGES_TO_DOWNLOAD = 100;
     private static int pageCount = 0;
 
-    private static Set<String> visitedPages = new HashSet<>();
+    private static final Set<String> visitedPages = new HashSet<>();
+    private static final Set<String> downloadPages = new HashSet<>();
 
-    public static void main(String[] args) throws IOException {
+    public static Set<String> startFirstHomework() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter starting web page URL: ");
         String startingUrl = scanner.nextLine();
         downloadPages(startingUrl);
+        return downloadPages;
     }
 
     private static void downloadPages(String url) throws IOException {
@@ -54,6 +56,7 @@ public class WebCrawler {
                 new FileOutputStream(
                         new File("pages", fileName), true));
         writer.println(text);
+        downloadPages.add(text);
         writer.close();
     }
 }
