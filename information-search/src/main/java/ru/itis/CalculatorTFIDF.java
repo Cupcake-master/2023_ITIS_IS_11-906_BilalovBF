@@ -11,7 +11,6 @@ public class CalculatorTFIDF {
         Map<String, Map<String, Double>> tfidf = new HashMap<>();
         Map<String, Double> idf = calculateIDF(documents);
         writeDataInFile(idf, "idf.txt");
-        System.err.println("000000");
 
         int count = 0;
         for (Map.Entry<String, List<String>> entry : documents.entrySet()) {
@@ -23,20 +22,28 @@ public class CalculatorTFIDF {
 
             Map<String, Double> docTFIDF = new HashMap<>();
 
-            int countTFIDF = 0;
             for (Map.Entry<String, Double> tfEntry : tf.entrySet()) {
                 String term = tfEntry.getKey();
                 double tfValue = tfEntry.getValue();
                 double idfValue = idf.getOrDefault(term, 0.0);
-                docTFIDF.put(term, tfValue * idfValue);
-                writeDataInFile(docTFIDF, "tfidf_" + countTFIDF + ".txt");
-                countTFIDF++;
+                double value = Math.round((tfValue * idfValue) * 100000.0) / 100000.0;
+                docTFIDF.put(term, value);
             }
 
             tfidf.put(docId, docTFIDF);
 
             count++;
         }
+
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, Map<String, Double>> mapEntry: tfidf.entrySet()){
+            builder.append(mapEntry.getKey()).append('\n');
+            for (Map.Entry<String, Double> map : mapEntry.getValue().entrySet()){
+                builder.append(map.getKey()).append(" --- ")
+                        .append(map.getValue()).append('\n');
+            }
+        }
+        WebCrawlerImpl.writeToFile("tfidf.txt", builder.toString());
 
         return tfidf;
     }
@@ -64,7 +71,8 @@ public class CalculatorTFIDF {
                             System.err.println(count);
                         }
                     }
-                    idf.put(word, Math.log10(totalDocs / count));
+                    double roundedValue = Math.round((Math.log10(totalDocs / count)) * 100000.0) / 100000.0;
+                    idf.put(word, roundedValue);
                 }
             }
         }
@@ -82,7 +90,8 @@ public class CalculatorTFIDF {
         for (Map.Entry<String, Double> entry : tf.entrySet()) {
             String term = entry.getKey();
             double freq = entry.getValue();
-            tf.put(term, freq / wordCount);
+            double roundedValue = Math.round((freq / wordCount) * 100000.0) / 100000.0;
+            tf.put(term, roundedValue);
         }
 
         return tf;
