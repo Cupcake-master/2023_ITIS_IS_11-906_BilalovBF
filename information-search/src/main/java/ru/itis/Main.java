@@ -29,7 +29,7 @@ public class Main {
             }
 
             BooleanSearch.searchDocumentsByQuery(newMap);
-            CalculatorTFIDF.calculateTFIDF(listWithoutIndexesOfWord);
+            CalculatorTFIDF.calculateTermFrequencyInverseDocumentFrequency(listWithoutIndexesOfWord);
         } catch (IOException e) {
             e.printStackTrace();
         }

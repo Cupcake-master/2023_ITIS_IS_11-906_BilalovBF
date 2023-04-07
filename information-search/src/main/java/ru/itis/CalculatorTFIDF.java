@@ -7,9 +7,10 @@ import java.util.Map;
 
 public class CalculatorTFIDF {
 
-    public static Map<String, Map<String, Double>> calculateTFIDF(Map<String, List<String>> documents) throws IOException {
+    public static Map<String, Map<String, Double>> calculateTermFrequencyInverseDocumentFrequency
+            (Map<String, List<String>> documents) throws IOException {
         Map<String, Map<String, Double>> tfidf = new HashMap<>();
-        Map<String, Double> idf = calculateIDF(documents);
+        Map<String, Double> idf = calculateInverseDocumentFrequency(documents);
         writeDataInFile(idf, "idf.txt");
 
         int count = 0;
@@ -17,7 +18,7 @@ public class CalculatorTFIDF {
             String docId = entry.getKey();
             List<String> words = entry.getValue();
 
-            Map<String, Double> tf = calculateTF(words);
+            Map<String, Double> tf = calculateTermFrequency(words);
             writeDataInFile(tf, "tf_" + count + ".txt");
 
             Map<String, Double> docTFIDF = new HashMap<>();
@@ -57,7 +58,7 @@ public class CalculatorTFIDF {
         WebCrawlerImpl.writeToFile(fileName, builder.toString());
     }
 
-    public static Map<String, Double> calculateIDF(Map<String, List<String>> documents) {
+    public static Map<String, Double> calculateInverseDocumentFrequency(Map<String, List<String>> documents) {
         Map<String, Double> idf = new HashMap<>();
         int totalDocs = documents.size();
         for (String docId : documents.keySet()) {
@@ -79,7 +80,7 @@ public class CalculatorTFIDF {
         return idf;
     }
 
-    public static Map<String, Double> calculateTF(List<String> words) {
+    public static Map<String, Double> calculateTermFrequency(List<String> words) {
         Map<String, Double> tf = new HashMap<>();
         int wordCount = words.size();
 
