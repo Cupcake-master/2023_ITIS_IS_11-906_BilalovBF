@@ -30,22 +30,19 @@ public class BooleanSearch {
     }
 
     public static void searchDocumentsByQuery(Map<String, Set<String>> wordMap) throws IOException {
-        //форум & друг | участок
-        //друг | успех | факт
-        //форум & !солдат | !участок
-        //друг | !успех | !факт
-        for (int i = 0; i < 4; i++) {
-            String query = getQueryByScanner();
-            Set<String> result = search(wordMap, query);
+        String[] queries = {"мир & при & идеа", "!иванович | дмитриевич | август",
+                "все & вопрос"};
+        for (int i = 0; i < queries.length; i++) {
+            Set<String> result = search(wordMap, queries[i]);
             String builder = result.stream().map(doc -> "- " + doc + "\n")
                     .collect(Collectors
-                            .joining("", "Результаты поиска для запроса: " + query + '\n',
+                            .joining("", "Результаты поиска для запроса: " + queries[i] + '\n',
                                     ""));
             WebCrawlerImpl.writeToFile(String.format("query_%d.txt", i), builder);
         }
     }
 
-    private static String getQueryByScanner(){
+    private static String getQueryByScanner() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter query: ");
         return scanner.nextLine();
@@ -69,7 +66,7 @@ public class BooleanSearch {
                 Set<String> set1 = stack.pop();
                 Set<String> result = applyOperator(set1, set2, token);
                 stack.push(result);
-            }else if (token.startsWith("!")){
+            } else if (token.startsWith("!")) {
                 String word = token.substring(1);
                 stack.push(findDocumentByToken(word, wordMap, false));
             } else {
@@ -81,7 +78,7 @@ public class BooleanSearch {
     }
 
     private static Set<String> findDocumentByToken(String token, Map<String, Set<String>> wordMap,
-                                                   boolean isNeededContains){
+                                                   boolean isNeededContains) {
         Set<String> documents = new HashSet<>();
         wordMap.forEach((key, words) -> {
             if (words.contains(token) == isNeededContains) {
@@ -103,8 +100,7 @@ public class BooleanSearch {
         for (String token : tokens) {
             if (!isOperator(token)) {
                 outputQueue.add(token);
-            }
-            else {
+            } else {
                 // Пока стек операторов не пуст и приоритет оператора на вершине стека больше или равен приоритету текущего оператора
                 while (!operatorStack.empty() && (precedenceMap.get(operatorStack.peek()) >= precedenceMap.get(token))) {
                     // Извлекаем оператор из стека операторов и добавляем его в выходную строку

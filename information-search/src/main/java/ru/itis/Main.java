@@ -1,21 +1,24 @@
 package ru.itis;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         try {
-            Set<String> downloadPages = WebCrawler.startFirstHomework();
-            Set<String> tokens = TextProcessor.tokenize(downloadPages);
-            tokens.removeIf(s -> s.length() == 2);
-            System.out.println(tokens);
-            String[] textAfterLemmatize = TextProcessor.lemmatize(tokens);
-            String[] result = TextProcessor.removeStopWords(textAfterLemmatize);
-            System.out.println(Arrays.toString(result));
+            Map<String, String> urls = WebCrawlerImpl.getAllInternalUrlWithScanner();
+            Map<String, List<String>> map = TextProcessorImpl.start(urls);
+
+            Map<String, Set<String>> newMap = new HashMap<>();
+            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                String key = entry.getKey();
+                List<String> valueList = entry.getValue();
+                Set<String> valueSet = new HashSet<>(valueList);
+                newMap.put(key, valueSet);
+            }
+
+            BooleanSearch.searchDocumentsByQuery(newMap);
+            CalculatorTFIDF.calculateTFIDF(map);
         } catch (IOException e) {
             e.printStackTrace();
         }
