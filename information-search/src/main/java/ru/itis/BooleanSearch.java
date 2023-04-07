@@ -27,11 +27,33 @@ public class BooleanSearch {
         for (String doc : result) {
             System.out.println("- " + doc);
         }
+
+        Map<String, Set<String>> wordMap1 = new HashMap<>();
+        wordMap1.put("https://example.com/doc1", new HashSet<>(Arrays.asList("hello", "world", "java")));
+        wordMap1.put("https://example.com/doc2", new HashSet<>(Arrays.asList("world", "programming", "language")));
+        wordMap1.put("https://example.com/doc3", new HashSet<>(Arrays.asList("programming", "java", "python")));
+        Map<String, Set<String>> invertedIndex = reverseIndex(wordMap1);
+        System.out.println(invertedIndex);
+    }
+
+    public static Map<String, Set<String>> reverseIndex(Map<String, Set<String>> wordMap) {
+        Map<String, Set<String>> index = new HashMap<>();
+        for (Map.Entry<String, Set<String>> entry : wordMap.entrySet()) {
+            String url = entry.getKey();
+            Set<String> words = entry.getValue();
+            for (String word : words) {
+                if (!index.containsKey(word)) {
+                    index.put(word, new HashSet<>());
+                }
+                index.get(word).add(url);
+            }
+        }
+        return index;
     }
 
     public static void searchDocumentsByQuery(Map<String, Set<String>> wordMap) throws IOException {
-        String[] queries = {"мир & при & идеа", "!иванович | дмитриевич | август",
-                "все & вопрос"};
+        String[] queries = {"мир & при | идеа", "иванович | дмитриевич | август",
+                "все & !вопрос | !бог", "их | !дневник | !задач"};
         for (int i = 0; i < queries.length; i++) {
             Set<String> result = search(wordMap, queries[i]);
             String builder = result.stream().map(doc -> "- " + doc + "\n")
