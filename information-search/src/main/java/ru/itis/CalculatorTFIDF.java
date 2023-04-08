@@ -1,6 +1,11 @@
 package ru.itis;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +14,7 @@ public class CalculatorTFIDF {
 
     public static Map<String, Map<String, Double>> calculateTermFrequencyInverseDocumentFrequency
             (Map<String, List<String>> documents) throws IOException {
+        List<TFIDF> tfidfs = new ArrayList<>();
         Map<String, Map<String, Double>> tfidf = new HashMap<>();
         Map<String, Double> idf = calculateInverseDocumentFrequency(documents);
         writeDataInFile(idf, "idf.txt");
@@ -29,6 +35,7 @@ public class CalculatorTFIDF {
                 double idfValue = idf.getOrDefault(term, 0.0);
                 double value = Math.round((tfValue * idfValue) * 100000.0) / 100000.0;
                 docTFIDF.put(term, value);
+                tfidfs.add(new TFIDF(term, tfValue, idfValue, value));
             }
 
             tfidf.put(docId, docTFIDF);
@@ -36,17 +43,22 @@ public class CalculatorTFIDF {
             count++;
         }
 
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, Map<String, Double>> mapEntry: tfidf.entrySet()){
-            builder.append(mapEntry.getKey()).append('\n');
-            for (Map.Entry<String, Double> map : mapEntry.getValue().entrySet()){
-                builder.append(map.getKey()).append(" --- ")
-                        .append(map.getValue()).append('\n');
-            }
-        }
-        WebCrawlerImpl.writeToFile("tfidf.txt", builder.toString());
-
+        saveAsCsv(tfidfs, "tfidfs.csv");
         return tfidf;
+    }
+
+    public static void saveAsCsv(List<TFIDF> tfidfList, String filePath) throws IOException {
+        FileWriter out = new FileWriter(filePath);
+        CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT
+                .withHeader("Term", "TF", "IDF", "TF-IDF"));
+
+        for (TFIDF tfidf : tfidfList) {
+            printer.printRecord(tfidf.getTerm(), tfidf.getTfValue(),
+                    tfidf.getIdfValue(), tfidf.getValue());
+        }
+
+        printer.flush();
+        printer.close();
     }
 
     private static void writeDataInFile(Map<String, Double> map, String fileName) throws IOException {
