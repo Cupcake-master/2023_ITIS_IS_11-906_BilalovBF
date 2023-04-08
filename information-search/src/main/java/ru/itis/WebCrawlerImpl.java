@@ -1,11 +1,14 @@
 package ru.itis;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -41,7 +44,8 @@ public class WebCrawlerImpl {
                     text = text.substring(0, MIN_WORDS_PER_PAGE);
                 }
 
-                if (!urls.containsKey(url)) {
+                if (!urls.containsKey(url) && !url.endsWith(".jpg")) {
+                    url = URLDecoder.decode(url, StandardCharsets.UTF_8);
                     urls.put(url, text);
                 }
 
@@ -53,7 +57,8 @@ public class WebCrawlerImpl {
                 for (String currentUrl : linkList) {
                     try {
                         String currentText = Jsoup.connect(currentUrl).get().text();
-                        if (MAX_PAGES_TO_DOWNLOAD > urls.size()) {
+                        currentUrl = URLDecoder.decode(currentUrl, StandardCharsets.UTF_8);
+                        if (MAX_PAGES_TO_DOWNLOAD > urls.size() && !currentUrl.endsWith(".jpg")) {
                             urls.put(currentUrl, currentText);
                         }
                     } catch (Exception ex) {

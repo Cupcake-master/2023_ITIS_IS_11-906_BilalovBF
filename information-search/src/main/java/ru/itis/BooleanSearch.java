@@ -36,7 +36,7 @@ public class BooleanSearch {
         System.out.println(invertedIndex);
     }
 
-    public static Map<String, Set<String>> reverseIndex(Map<String, Set<String>> wordMap) {
+    public static Map<String, Set<String>> reverseIndex(Map<String, Set<String>> wordMap) throws IOException {
         Map<String, Set<String>> index = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : wordMap.entrySet()) {
             String url = entry.getKey();
@@ -48,20 +48,31 @@ public class BooleanSearch {
                 index.get(word).add(url);
             }
         }
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, Set<String>> entry : wordMap.entrySet()) {
+            builder.append(entry.getKey()).append('\n');
+            for (String s: entry.getValue()) {
+                builder.append("- ").append(s).append('\n');
+            }
+            builder.append('\n').append('\n').append('\n');
+        }
+        WebCrawlerImpl.writeToFile("reverseIndex.txt", builder.toString());
         return index;
     }
 
     public static void searchDocumentsByQuery(Map<String, Set<String>> wordMap) throws IOException {
-        String[] queries = {"мир & при | идеа", "иванович | дмитриевич | август",
-                "все & !вопрос | !бог", "их | !дневник | !задач"};
-        for (int i = 0; i < queries.length; i++) {
-            Set<String> result = search(wordMap, queries[i]);
+        String[] queries = {"мир & при | идеа", "мир | при | идеа",
+                "мир & !при | !идеа", "мир | !при | !идеа"};
+        StringBuilder resultBuilder = new StringBuilder();
+        for (String query : queries) {
+            Set<String> result = search(wordMap, query);
             String builder = result.stream().map(doc -> "- " + doc + "\n")
                     .collect(Collectors
-                            .joining("", "Результаты поиска для запроса: " + queries[i] + '\n',
+                            .joining("", "Результаты поиска для запроса: " + query + '\n',
                                     ""));
-            WebCrawlerImpl.writeToFile(String.format("query_%d.txt", i), builder);
+            resultBuilder.append(builder).append('\n').append('\n').append('\n');
         }
+        WebCrawlerImpl.writeToFile("queries.txt", resultBuilder.toString());
     }
 
     private static String getQueryByScanner() {
