@@ -49,7 +49,7 @@ public class BooleanSearch {
             }
         }
         StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, Set<String>> entry : wordMap.entrySet()) {
+        for (Map.Entry<String, Set<String>> entry : index.entrySet()) {
             builder.append(entry.getKey()).append('\n');
             for (String s: entry.getValue()) {
                 builder.append("- ").append(s).append('\n');
@@ -73,6 +73,7 @@ public class BooleanSearch {
             resultBuilder.append(builder).append('\n').append('\n').append('\n');
         }
         WebCrawlerImpl.writeToFile("queries.txt", resultBuilder.toString());
+        reverseIndex(wordMap);
     }
 
     private static String getQueryByScanner() {
@@ -82,16 +83,14 @@ public class BooleanSearch {
     }
 
     public static Set<String> search(Map<String, Set<String>> wordMap, String query) throws IOException {
-        // Разбиваем запрос на токены
         String[] tokens = query.split("\\s+");
 
-        //Map<String, Set<String>> lematizedMap = new HashMap<>();
-        //lematizedMap.put("", new HashSet<>(List.of(tokens)));
+        //Map<String, List<String>> lematizedMap = new HashMap<>();
+        //lematizedMap.put("", new LinkedList<>(List.of(tokens)));
         //tokens = TextProcessorImpl.lemmatize(lematizedMap).get("").toArray(new String[0]);
 
-        // Преобразуем в обратную польскую запись
         List<String> rpn = toRPN(tokens);
-        // Выполняем операции в правильном порядке
+
         Stack<Set<String>> stack = new Stack<>();
         for (String token : rpn) {
             if (isOperator(token)) {
