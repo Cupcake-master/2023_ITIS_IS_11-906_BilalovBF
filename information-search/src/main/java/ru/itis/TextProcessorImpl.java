@@ -22,10 +22,6 @@ public class TextProcessorImpl {
     public static Map<String, List<String>> start(Map<String, String> map) throws IOException {
         Map<String, List<String>> tokens = tokenize(map);
         Map<String, List<String>> lemmatizes = lemmatize(tokens);
-        for (Map.Entry<String, List<String>> l: lemmatizes.entrySet()){
-            String text = String.format("URL: %s \n Words: %s \n", l.getKey(), l.getValue());
-            WebCrawlerImpl.writeToFile("lematized.txt", text);
-        }
         return lemmatizes;
     }
 

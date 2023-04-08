@@ -48,6 +48,7 @@ public class BooleanSearch {
                 index.get(word).add(url);
             }
         }
+
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, Set<String>> entry : index.entrySet()) {
             builder.append(entry.getKey()).append('\n');
